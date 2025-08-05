@@ -1,5 +1,5 @@
 # GroulCustomPackage
-Untiy Package
+Untiy Project -> Packages/manifest.json
 
 {
   "dependencies": {
