@@ -1,0 +1,7 @@
+{
+  "name": "Groul.Editor",
+  "references": [
+    "Groul.Runtime"
+  ],
+  "includePlatforms": ["Editor"]
+}
