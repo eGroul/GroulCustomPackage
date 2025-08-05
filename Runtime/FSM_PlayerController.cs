@@ -1,51 +1,50 @@
 using System.Collections;
-using Unity.Mathematics;
 using UnityEngine;
 
 public class FSM_PlayerController : MonoBehaviour
 {
-    // ÇÃ·¹ÀÌ¾îÀÇ »óÅÂ¸¦ ³ªÅ¸³»´Â ¿­°ÅÇüÀÔ´Ï´Ù.
+    // í”Œë ˆì´ì–´ì˜ ìƒíƒœë¥¼ ë‚˜íƒ€ë‚´ëŠ” ì—´ê±°í˜•ì…ë‹ˆë‹¤.
     private enum PlayerState
     {
-        Idle,     // ´ë±â »óÅÂ
-        Walking,  // °È´Â »óÅÂ
-        StartJump, // Á¡ÇÁ ÇÑ »óÅÂ
-        Jumping   // Á¡ÇÁ Áß »óÅÂ
+        Idle,     // ëŒ€ê¸° ìƒíƒœ
+        Walking,  // ê±·ëŠ” ìƒíƒœ
+        StartJump, // ì í”„ í•œ ìƒíƒœ
+        Jumping   // ì í”„ ì¤‘ ìƒíƒœ
     }
-    [Header("ÇÃ·¹ÀÌ¾î »óÅÂ")]
-    [Tooltip("ÇöÀç ÇÃ·¹ÀÌ¾îÀÇ »óÅÂÀÔ´Ï´Ù.")]
+    [Header("í”Œë ˆì´ì–´ ìƒíƒœ")]
+    [Tooltip("í˜„ì¬ í”Œë ˆì´ì–´ì˜ ìƒíƒœì…ë‹ˆë‹¤.")]
     [SerializeField] private PlayerState currentState = PlayerState.Idle;
 
-    [Header("ÇÃ·¹ÀÌ¾î ÀÌµ¿ °ü·Ã ¼³Á¤")]
-    [Tooltip("ÇÃ·¹ÀÌ¾îÀÇ ÀÌµ¿ ¼ÓµµÀÔ´Ï´Ù.")]
+    [Header("í”Œë ˆì´ì–´ ì´ë™ ê´€ë ¨ ì„¤ì •")]
+    [Tooltip("í”Œë ˆì´ì–´ì˜ ì´ë™ ì†ë„ì…ë‹ˆë‹¤.")]
     [SerializeField] private float moveSpeed = 5f;
-    [Tooltip("ÇÃ·¹ÀÌ¾î°¡ Á¡ÇÁÇÒ ¶§ Àû¿ëµÇ´Â ÈûÀÔ´Ï´Ù.")]
+    [Tooltip("í”Œë ˆì´ì–´ê°€ ì í”„í•  ë•Œ ì ìš©ë˜ëŠ” í˜ì…ë‹ˆë‹¤.")]
     [SerializeField] private float jumpForce = 7f;
 
-    [Header("Á¢Áö(Raycast) °ü·Ã ¼³Á¤")]
-    [Tooltip("¹Ù´ÚÀ¸·Î ÀÎ½ÄÇÒ ·¹ÀÌ¾î¸¦ ¼³Á¤ÇÕ´Ï´Ù.")]
+    [Header("ì ‘ì§€(Raycast) ê´€ë ¨ ì„¤ì •")]
+    [Tooltip("ë°”ë‹¥ìœ¼ë¡œ ì¸ì‹í•  ë ˆì´ì–´ë¥¼ ì„¤ì •í•©ë‹ˆë‹¤.")]
     [SerializeField] private LayerMask groundLayerMask;
-    [Tooltip("¹Ù´ÚÀ» °¨ÁöÇÏ´Â RayÀÇ ±æÀÌÀÔ´Ï´Ù.")]
+    [Tooltip("ë°”ë‹¥ì„ ê°ì§€í•˜ëŠ” Rayì˜ ê¸¸ì´ì…ë‹ˆë‹¤.")]
     [SerializeField] private float groundLayLength = 0.7f;
-    [Tooltip("ÇÃ·¹ÀÌ¾î°¡ Á¡ÇÁ ÈÄ, ÂøÁö ¿©ºÎ¸¦ ÆÇ´ÜÇÏ´Â ÄÚµå¸¦ ½ÇÇàÇÏ´Â µô·¹ÀÌÀÔ´Ï´Ù.")]
+    [Tooltip("í”Œë ˆì´ì–´ê°€ ì í”„ í›„, ì°©ì§€ ì—¬ë¶€ë¥¼ íŒë‹¨í•˜ëŠ” ì½”ë“œë¥¼ ì‹¤í–‰í•˜ëŠ” ë”œë ˆì´ì…ë‹ˆë‹¤.")]
     [SerializeField] private float goundDelay = 0.1f;
 
     private Rigidbody rb;
 
     private void Awake()
     {
-        // Rigidbody ÄÄÆ÷³ÍÆ® ÂüÁ¶ ÀúÀå
+        // Rigidbody ì»´í¬ë„ŒíŠ¸ ì°¸ì¡° ì €ì¥
         rb = GetComponent<Rigidbody>();
     }
     void Start()
     {
-        // ½ÃÀÛ »óÅÂ´Â Idle
+        // ì‹œì‘ ìƒíƒœëŠ” Idle
         ChangeState(PlayerState.Idle);
     }
 
     void Update()
     {
-        // ÇöÀç »óÅÂ¿¡ µû¶ó ÇØ´ç µ¿ÀÛ ¼öÇà
+        // í˜„ì¬ ìƒíƒœì— ë”°ë¼ í•´ë‹¹ ë™ì‘ ìˆ˜í–‰
         switch (currentState)
         {
             case PlayerState.Idle:
@@ -60,48 +59,48 @@ public class FSM_PlayerController : MonoBehaviour
         }
     }
 
-    // »óÅÂ¸¦ º¯°æÇÏ´Â ÇÔ¼ö
+    // ìƒíƒœë¥¼ ë³€ê²½í•˜ëŠ” í•¨ìˆ˜
     private void ChangeState(PlayerState newState)
     {
         currentState = newState;
     }
 
-    // ´ë±â »óÅÂ ·ÎÁ÷
+    // ëŒ€ê¸° ìƒíƒœ ë¡œì§
     private void HandleIdle()
     {
-        // ÀÌµ¿ ÀÔ·ÂÀÌ ÀÖÀ» °æ¿ì °È±â »óÅÂ·Î ÀüÈ¯
+        // ì´ë™ ì…ë ¥ì´ ìˆì„ ê²½ìš° ê±·ê¸° ìƒíƒœë¡œ ì „í™˜
         if (ReturnGetAxis() != Vector3.zero)
         {
             ChangeState(PlayerState.Walking);
         }
-        // Á¡ÇÁ Å° ÀÔ·Â ½Ã Á¡ÇÁ »óÅÂ·Î ÀüÈ¯
+        // ì í”„ í‚¤ ì…ë ¥ ì‹œ ì í”„ ìƒíƒœë¡œ ì „í™˜
         else if (Input.GetButtonDown("Jump"))
         {
             ChangeState(PlayerState.StartJump);
         }
     }
 
-    // °È±â »óÅÂ ·ÎÁ÷
+    // ê±·ê¸° ìƒíƒœ ë¡œì§
     private void HandleWalking()
     {
         Vector3 moveDir = ReturnGetAxis();
 
-        // ´ë°¢¼± ÀÌµ¿ ½Ã ¼Óµµ º¸Á¤À» À§ÇØ Á¤±ÔÈ­
+        // ëŒ€ê°ì„  ì´ë™ ì‹œ ì†ë„ ë³´ì •ì„ ìœ„í•´ ì •ê·œí™”
         if (moveDir.magnitude > 1)
             moveDir.Normalize();
 
-        // ÀÔ·ÂÀÌ ÀÖÀ» °æ¿ì ÀÌµ¿
+        // ì…ë ¥ì´ ìˆì„ ê²½ìš° ì´ë™
         if (moveDir.magnitude > 0f)
         {
             transform.Translate(moveDir * moveSpeed * Time.deltaTime, Space.World);
         }
         else
         {
-            // ÀÌµ¿ÀÌ ¸ØÃèÀ» °æ¿ì ´ë±â »óÅÂ·Î ÀüÈ¯
+            // ì´ë™ì´ ë©ˆì·„ì„ ê²½ìš° ëŒ€ê¸° ìƒíƒœë¡œ ì „í™˜
             ChangeState(PlayerState.Idle);
         }
 
-        // Á¡ÇÁ Å° ÀÔ·Â ½Ã Á¡ÇÁ »óÅÂ·Î ÀüÈ¯
+        // ì í”„ í‚¤ ì…ë ¥ ì‹œ ì í”„ ìƒíƒœë¡œ ì „í™˜
         if (Input.GetButtonDown("Jump"))
         {
             ChangeState(PlayerState.StartJump);
@@ -112,32 +111,35 @@ public class FSM_PlayerController : MonoBehaviour
     {
         if (groundLayerMask != 0)
         {
-            // Á¡ÇÁÇÏ°í ÀÖ´Â »óÅÂ·Î º¯°æ
+            // ì í”„í•˜ê³  ìˆëŠ” ìƒíƒœë¡œ ë³€ê²½
             ChangeState(PlayerState.Jumping);
 
-            // Á¢Áö »óÅÂÀÏ °æ¿ì¿¡¸¸ Á¡ÇÁ·Â Àû¿ë
+            // ì ‘ì§€ ìƒíƒœì¼ ê²½ìš°ì—ë§Œ ì í”„ë ¥ ì ìš©
             if (Physics.Raycast(transform.position, Vector3.down, groundLayLength, groundLayerMask))
                 rb.AddForce(Vector3.up * jumpForce + ReturnGetAxis().normalized * moveSpeed, ForceMode.Impulse);
 
             yield return new WaitForSeconds(goundDelay);
 
-            while (math.abs(rb.linearVelocity.y) > 0.1f || Physics.Raycast(transform.position, Vector3.down, groundLayLength, groundLayerMask) == false)
+            while (Abs(rb.linearVelocity.y) > 0.1f || Physics.Raycast(transform.position, Vector3.down, groundLayLength, groundLayerMask) == false)
             {
-                // Ray ½Ã°¢È­ (¾À ºä Àü¿ë)
+                // Ray ì‹œê°í™” (ì”¬ ë·° ì „ìš©)
                 Debug.DrawRay(transform.position, Vector3.down * groundLayLength, Color.green, 0.1f);
                 yield return null;
             }
-            // Á¢ÁöÇÏ¸é ¹Ù·Î ´ë±â »óÅÂ·Î º¹±Í
+            // ì ‘ì§€í•˜ë©´ ë°”ë¡œ ëŒ€ê¸° ìƒíƒœë¡œ ë³µê·€
             ChangeState(PlayerState.Idle);
         }
         else
         {
-            Debug.LogWarning("groundLayerMask °¡ nothing ÀÌ¾î¼­ Á¡ÇÁ¸¦ ¸øÇÕ´Ï´Ù.");
+            Debug.LogWarning("groundLayerMask ê°€ nothing ì´ì–´ì„œ ì í”„ë¥¼ ëª»í•©ë‹ˆë‹¤.");
             ChangeState(PlayerState.Idle);
         }
     }
-
-    // Å°º¸µå ÀÔ·ÂÀ¸·ÎºÎÅÍ ÀÌµ¿ ¹æÇâÀ» ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    private float Abs(float value)
+    {
+        return value < 0 ? -value : value;
+    }
+    // í‚¤ë³´ë“œ ì…ë ¥ìœ¼ë¡œë¶€í„° ì´ë™ ë°©í–¥ì„ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
     private Vector3 ReturnGetAxis()
     {
         float h = Input.GetAxis("Horizontal");
