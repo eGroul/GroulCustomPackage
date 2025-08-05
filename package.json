@@ -1,7 +1,7 @@
 {
-  "name": "com.eGroul.groulcustompackage",
+  "name": "com.groul.groulcustompackage",
   "version": "1.0.0",
-  "displayName": "Groul Custom Package",
+  "displayName": "groul Custom Package",
   "description": "A custom package for groul project.",
   "author": {
     "name": "eGroul",
@@ -9,3 +9,4 @@
     "url": "https://github.com/eGroul/GroulCustomPackage"
   }
 }
+
