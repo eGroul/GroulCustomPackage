@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class FSM_Basic_PlayerController : MonoBehaviour
+public class FSM_PlayerController : MonoBehaviour
 {
     // 플레이어의 상태를 나타내는 열거형입니다.
     private enum PlayerState
@@ -147,4 +147,5 @@ public class FSM_Basic_PlayerController : MonoBehaviour
         return new Vector3(h, 0, v);
     }
 }
+
 
